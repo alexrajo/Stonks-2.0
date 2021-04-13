@@ -1,7 +1,7 @@
 import tkinter as tk
 import stockscraper
 import backtester
-from PIL import ImageTk, Image
+#from PIL import ImageTk, Image
 
 class Application(tk.Frame):
     def __init__(self, master=None):
