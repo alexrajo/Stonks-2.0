@@ -11,9 +11,6 @@ class Strategy:
             "50": 0,
             "200": 0
         }
-        self.charts = [
-            ["ma", 50, 200]
-        ]
 
     def on_data(self, info):
 
@@ -30,4 +27,9 @@ class Strategy:
 
         self.prev_ma["50"] = ma_50
         self.prev_ma["200"] = ma_200
-        return decision
+
+        charts = [
+            "50 SMA", ma_50,
+            "200 SMA", ma_200
+        ]
+        return {"decision": decision, "charts": charts}

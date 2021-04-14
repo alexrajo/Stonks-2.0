@@ -8,18 +8,16 @@ class Strategy:
         self.overbought_threshold = 70
         self.oversold_threshold = 30
 
-        self.charts = [
-            ["rsi"]
-        ]
-
     def on_data(self, info):
 
         close_price = info["c"]
-        rsi = self.indicator.on_data(close_price)
+        rsi_ = self.indicator.on_data(close_price)
 
-        if rsi >= self.overbought_threshold:
-            return -1
-        elif rsi <= self.oversold_threshold:
-            return 1
+        decision = 0
 
-        return 0
+        if rsi_ >= self.overbought_threshold:
+            decision = -1
+        elif rsi_ <= self.oversold_threshold:
+            decision = 1
+
+        return {"decision": decision, "charts": ["rsi", rsi_], "separated": True}

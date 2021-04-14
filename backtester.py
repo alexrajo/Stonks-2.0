@@ -23,21 +23,6 @@ class Backtester:
             "rsi/golden_cross": [rsi, golden_cross]
         }
 
-    def get_moving_average(self, periods, history):
-        ma = []
-        t = 0
-        sum = 0
-        for b in history:
-            t += 1
-            sum += b
-            if t > periods:
-                sum -= history[t-periods]
-
-            div = min(t, periods)
-            ma.append(sum/div)
-
-        return ma
-
     def run_test(self, stock, strategy, capital):
         self.capital = capital
         self.holding = 0
@@ -49,8 +34,10 @@ class Backtester:
         actions = []
         portfolio_history = []
         calcs = []
+        indicator_charts = {}
         for s in self.strategies[strategy]:
-            calcs.append(s.Strategy())
+            calc = s.Strategy()
+            calcs.append(calc)
 
         def set_portfolio_value(price):
             self.portfolio = self.capital + self.holding*price
@@ -87,8 +74,20 @@ class Backtester:
 
             decision = 0
             for calc in calcs:
-                d = calc.on_data(info=info)
+                response = calc.on_data(info=info)
+                d = response["decision"]
                 decision += d
+
+                charts_ = response.get("charts") or []
+                separated = response.get("separated") or False
+                for ci in range(len(charts_)):
+                    if ci % 2 != 0:
+                        continue
+
+                    if indicator_charts.get(charts_[ci]) is None:
+                        indicator_charts[charts_[ci]] = {"data": [], "separated": separated}
+
+                    indicator_charts[charts_[ci]]["data"].append(charts_[ci+1])
 
             color = (decision == 1) and "green" or "red"
 
@@ -103,18 +102,26 @@ class Backtester:
 
             set_portfolio_value(info["c"])
 
-        figure, plots = plotter.subplots(2)
+        indicator_subplots = 0
+        for chart_name in indicator_charts:
+            if indicator_charts[chart_name]["separated"]:
+                indicator_subplots += 1
+
+        figure, plots = plotter.subplots(2+indicator_subplots)
         plots[0].plot(x, closing_prices)
         plots[1].plot(x, portfolio_history)
 
-        for calc in calcs:
-            for chart_type in calc.charts:
-                if chart_type[0] == "ma":
-                    for i in range(1, len(chart_type)):
-                        plots[0].plot(x, self.get_moving_average(chart_type[i], closing_prices))
-
         plots[0].set_title("Closing price history ({})".format(stock))
         plots[1].set_title("Portfolio value history")
+
+        current_extraplot = 2
+        for chart_name in indicator_charts:
+            chart = indicator_charts[chart_name]
+            if chart["separated"]:
+                plots[current_extraplot].plot(x, chart["data"])
+                plots[current_extraplot].set_title(chart_name)
+            else:
+                plots[0].plot(x, chart["data"])
 
         for action in actions:
             plots[0].axvline(action["t"], 0, 1, color=action["c"])
@@ -122,6 +129,8 @@ class Backtester:
         plotter.xlabel("Days")
         plots[0].set_ylabel("Closing price")
         plots[1].set_ylabel("Value")
+
+        plotter.subplots_adjust(hspace=0.4+indicator_subplots*0.4)
 
         # plotter.figure(num="{} BACKTEST".format(stock))
         plotter.show()

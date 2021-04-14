@@ -10,9 +10,11 @@ class Strategy:
         self.history.append(close_price)
         self.sum += close_price
 
-        if close_price > self.sum/len(self.history)*1:
-            return -1
-        elif close_price < self.sum/len(self.history)*0.9:
-            return 1
+        decision = 0
 
-        return 0
+        if close_price > self.sum/len(self.history)*1:
+            decision = -1
+        elif close_price < self.sum/len(self.history)*0.9:
+            decision = 1
+
+        return {"decision": decision}
