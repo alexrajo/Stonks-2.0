@@ -31,7 +31,7 @@ class Application(tk.Frame):
             "EURONEXT/EQNR", "EURONEXT/RECSI", "EURONEXT/NEL", "EURONEXT/KOA", "EURONEXT/SALME", "EURONEXT/AOW",
             "EURONEXT/NHY", "EURONEXT/AKRBP"
         ]
-        self.strategies = ["test", "golden_cross", "rsi", "rsi/golden_cross"]
+        self.strategies = ["test", "golden_cross", "rsi", "rsi/golden_cross", "vix"]
 
         self.setup_ui()
 

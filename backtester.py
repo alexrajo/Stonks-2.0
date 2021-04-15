@@ -1,15 +1,18 @@
 import matplotlib.pyplot as plotter
+from matplotlib import style
 import quandl
 import numpy as np
+import manager
 from config import *
 
 # strategies
-from strategies import test, golden_cross, rsi
+from strategies import test, golden_cross, rsi, vix
 
 quandl.ApiConfig.api_key = QUANDL_API_KEY
 
 transaction_fee = 0.0015
-vix = "CHRIS/CBOE_VX1"
+
+style.use("dark_background")
 
 class Backtester:
     def __init__(self):
@@ -20,7 +23,8 @@ class Backtester:
             "test": [test],
             "golden_cross": [golden_cross],
             "rsi": [rsi],
-            "rsi/golden_cross": [rsi, golden_cross]
+            "rsi/golden_cross": [rsi, golden_cross],
+            "vix": [vix]
         }
 
     def run_test(self, stock, strategy, capital):
