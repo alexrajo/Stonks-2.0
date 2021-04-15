@@ -5,9 +5,6 @@ import numpy as np
 import manager
 from config import *
 
-# strategies
-from strategies import test, golden_cross, rsi, vix
-
 quandl.ApiConfig.api_key = QUANDL_API_KEY
 
 transaction_fee = 0.0015
@@ -19,13 +16,6 @@ class Backtester:
         self.capital = 0
         self.holding = 0
         self.portfolio = 0
-        self.strategies = {
-            "test": [test],
-            "golden_cross": [golden_cross],
-            "rsi": [rsi],
-            "rsi/golden_cross": [rsi, golden_cross],
-            "vix": [vix]
-        }
 
     def run_test(self, stock, strategy, capital):
         self.capital = capital
@@ -37,11 +27,13 @@ class Backtester:
         closing_prices = []
         actions = []
         portfolio_history = []
-        calcs = []
         indicator_charts = {}
-        for s in self.strategies[strategy]:
-            calc = s.Strategy()
-            calcs.append(calc)
+
+        s = manager.s.get(strategy)
+        if s is None:
+            return
+
+        calc = s.Strategy()
 
         def set_portfolio_value(price):
             self.portfolio = self.capital + self.holding*price
@@ -77,21 +69,19 @@ class Backtester:
             closing_prices.append(info["c"])
 
             decision = 0
-            for calc in calcs:
-                response = calc.on_data(info=info)
-                d = response["decision"]
-                decision += d
+            response = calc.on_data(info=info)
+            decision = response["decision"]
 
-                charts_ = response.get("charts") or []
-                separated = response.get("separated") or False
-                for ci in range(len(charts_)):
-                    if ci % 2 != 0:
-                        continue
+            charts_ = response.get("charts") or []
+            separated = response.get("separated") or False
+            for ci in range(len(charts_)):
+                if ci % 2 != 0:
+                    continue
 
-                    if indicator_charts.get(charts_[ci]) is None:
-                        indicator_charts[charts_[ci]] = {"data": [], "separated": separated}
+                if indicator_charts.get(charts_[ci]) is None:
+                    indicator_charts[charts_[ci]] = {"data": [], "separated": separated}
 
-                    indicator_charts[charts_[ci]]["data"].append(charts_[ci+1])
+                indicator_charts[charts_[ci]]["data"].append(charts_[ci + 1])
 
             color = (decision == 1) and "green" or "red"
 

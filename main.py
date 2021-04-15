@@ -1,6 +1,7 @@
 import tkinter as tk
 import stockscraper
 import backtester
+import manager
 #from PIL import ImageTk, Image
 
 class Application(tk.Frame):
@@ -31,7 +32,9 @@ class Application(tk.Frame):
             "EURONEXT/EQNR", "EURONEXT/RECSI", "EURONEXT/NEL", "EURONEXT/KOA", "EURONEXT/SALME", "EURONEXT/AOW",
             "EURONEXT/NHY", "EURONEXT/AKRBP"
         ]
-        self.strategies = ["test", "golden_cross", "rsi", "rsi/golden_cross", "vix"]
+        self.strategies = []
+        for s in manager.s:
+            self.strategies.append(s)
 
         self.setup_ui()
 
