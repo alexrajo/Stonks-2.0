@@ -22,6 +22,7 @@ class Application(tk.Frame):
 
         self.backtest_inputs = {
             "stock": None,
+            "stock_txt": None,
             "strategy": None,
             "start_capital": None
         }
@@ -116,6 +117,10 @@ class Application(tk.Frame):
 
 
         create_dropdown_menu(title="Stock:", input_type="stock", options=self.bt_stocks)
+        ticker_input_txt = tk.Entry(options_inner_container, text="Input ticker")
+        ticker_input_txt.pack()
+        self.backtest_inputs["stock_txt"] = ticker_input_txt
+
         create_dropdown_menu(title="Strategy:", input_type="strategy", options=self.strategies)
 
         o_title = tk.Label(options_inner_container, text="Start capital:", font=("Calibri", 14))
@@ -151,7 +156,7 @@ class Application(tk.Frame):
         self.current_window = window_name
 
     def run_backtest(self):
-        stock = self.backtest_inputs["stock"].get()
+        stock = self.backtest_inputs["stock_txt"].get() or self.backtest_inputs["stock"].get()
         strategy = self.backtest_inputs["strategy"].get()
         start_capital = self.backtest_inputs["start_capital"].get() or 0
         start_capital = int(start_capital)
