@@ -17,4 +17,4 @@ class Strategy:
         elif vix_["c"] < self.sell_threshold:
             decision = -1
 
-        return {"decision": decision, "charts": ["vix", vix_["c"]], "separated": True}
+        return {"decision": decision, "charts": ["vix", vix_["c"], True]}

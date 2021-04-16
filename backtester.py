@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plotter
 from matplotlib import style
 import quandl
-import numpy as np
 import manager
 from config import *
 
@@ -73,13 +72,12 @@ class Backtester:
             decision = response["decision"]
 
             charts_ = response.get("charts") or []
-            separated = response.get("separated") or False
             for ci in range(len(charts_)):
-                if ci % 2 != 0:
+                if ci % 3 != 0:
                     continue
 
                 if indicator_charts.get(charts_[ci]) is None:
-                    indicator_charts[charts_[ci]] = {"data": [], "separated": separated}
+                    indicator_charts[charts_[ci]] = {"data": [], "separated": charts_[ci+2]}
 
                 indicator_charts[charts_[ci]]["data"].append(charts_[ci + 1])
 
@@ -93,6 +91,10 @@ class Backtester:
                 completed = sell(info["c"])
                 if completed:
                     actions.append({"t": t, "c": "red"})
+            elif decision == -2:
+                # Shorting
+                actions.append({"t": t, "c": "yellow"})
+                pass
 
             set_portfolio_value(info["c"])
 

@@ -1,5 +1,6 @@
 from indicators import vwap, rsi, ema
 
+
 class Strategy:
     def __init__(self):
         self.history = []

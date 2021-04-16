@@ -20,4 +20,4 @@ class Strategy:
         elif rsi_ <= self.oversold_threshold:
             decision = 1
 
-        return {"decision": decision, "charts": ["rsi", rsi_], "separated": True}
+        return {"decision": decision, "charts": ["rsi", rsi_, True]}

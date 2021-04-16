@@ -29,7 +29,7 @@ class Strategy:
         self.prev_ma["200"] = ma_200
 
         charts = [
-            "50 SMA", ma_50,
-            "200 SMA", ma_200
+            "50 SMA", ma_50, False,
+            "200 SMA", ma_200, False
         ]
         return {"decision": decision, "charts": charts}
