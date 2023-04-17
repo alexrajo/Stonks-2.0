@@ -15,9 +15,9 @@ class Application(tk.Frame):
         self.windows = {}
         self.current_window = "welcome"
         self.top_buttons = [
-            {"text": "Find stocks", "window_name": "stockfinder"},
+            #{"text": "Find stocks", "window_name": "stockfinder"},
             {"text": "Backtest", "window_name": "backtest"},
-            {"text": "Paper trading", "window_name": "papertrade"}
+            #{"text": "Paper trading", "window_name": "papertrade"}
         ]
 
         self.backtest_inputs = {
